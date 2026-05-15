@@ -6,7 +6,7 @@ export const handleChangeStandbyStatus: EventHandler = (data, ws, context) => {
     try {
         const { roomId, standByStatus } = data.payload as { roomId: string; standByStatus: UserStandByStatus};
         const statusChanged = context.roomManager.changeStandbyStatus(roomId, ws, standByStatus);
-        
+
         const room = context.roomManager.getRoom(roomId);
 
         if(!room) return null;
@@ -29,7 +29,7 @@ export const handleChangeStandbyStatus: EventHandler = (data, ws, context) => {
 
         if(
             everyOneIsReady && 
-            room.participants.length > 2 && 
+            // room.participants.length > 2 && 
             room?.gameStatus !== "in-progress"
         ){
             if(room.countDownTimer){
@@ -42,11 +42,13 @@ export const handleChangeStandbyStatus: EventHandler = (data, ws, context) => {
                 const stillValid = 
                     room.startTime === startTime &&
                     room.gameStatus !== "in-progress" &&
-                    room.participants.length > 2 &&
+                    // room.participants.length > 2 &&
                     room.participants.every(p => p.standByStatus === "ready");
 
                 if(stillValid){
                     room.gameStatus = "in-progress";
+                    room.participants.forEach(p => p.standByStatus = "playing")
+                    context.broadcastToAll(MessageFormatter.standbyStatusUpdated(roomId, "playing"));
                     context.broadcastToAll(MessageFormatter.changeGameStatus(roomId, "in-progress"));
                 }
             }, 6000);

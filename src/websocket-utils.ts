@@ -52,3 +52,26 @@ export class WebSocketUtils {
         return connections.filter((client) => client.readyState === 1);
     }
 }
+
+
+
+export class GridConverter {
+    private static GRID_SIZE = 20;
+
+    static indexToCoords(index:number): {x:number, y:number} {
+
+        return {
+            x: index % this.GRID_SIZE,
+            y: Math.floor(index / this.GRID_SIZE)
+        }
+
+    }
+
+    static coordsToIndex(x:number, y:number): number {
+        return (y * this.GRID_SIZE) + x;
+    }
+
+    static indicesToCoords(indices:number[]):Array<{x:number, y:number}> {
+        return indices.map((idx)=>this.indexToCoords(idx))
+    }
+}

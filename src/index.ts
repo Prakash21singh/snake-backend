@@ -8,6 +8,7 @@ import { RoomManager,  } from './room-manager';
 import { EventDispatcher } from './event-dispatcher';
 import { WebSocketUtils } from './websocket-utils';
 import { MessageFormatter } from './message-formatter';
+import { SnakeManager } from './snake-manager';
 
 // Initialize Express and WebSocket server
 const app = express();
@@ -16,6 +17,7 @@ const wss = new WebSocketServer({ noServer: true });
 
 // Initialize managers
 const roomManager = new RoomManager();
+const snakeManager = new SnakeManager();
 const eventDispatcher = new EventDispatcher();
 
 // Middleware
@@ -64,6 +66,7 @@ wss.on('connection', (ws: ExtendedWebSocket) => {
             // Create handler context for broadcasting
             const context: HandlerContext = {
                 roomManager,
+                snakeManager,
                 broadcastToRoom: (roomId, message, excludeWs) => {
                     const room = roomManager.getRoom(roomId);
                     if (room) {

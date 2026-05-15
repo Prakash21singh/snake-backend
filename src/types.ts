@@ -1,5 +1,6 @@
 import type { WebSocket } from 'ws';
-import { RoomManager } from './room-manager';
+import type { RoomManager } from './room-manager';
+import type { SnakeManager } from './snake-manager';
 
 // Game and Room Types
 export type GameStatus = "waiting" | "in-progress" | "finished";
@@ -10,9 +11,14 @@ export interface User {
     id: string;
     name: string;
 }
+export type Direction = 'U' | 'D' | 'L' | 'R';
 
+export interface SnakePosition {
+    body: number[];
+    direction: Direction;
+}
 export interface SnakeState {
-    direction: string;
+    direction: Direction;
     body: { x: number; y: number }[];
 }
 
@@ -23,7 +29,7 @@ export interface GameState {
 
 export interface ExtendedWebSocket extends WebSocket {
     user: User;
-    snake: SnakeState;
+    snake?: SnakeState;
     color: string;
     gameState: GameState;
     standByStatus: UserStandByStatus;
@@ -63,6 +69,7 @@ export type EventHandler = (data: Message, ws: ExtendedWebSocket, context: Handl
 
 export interface HandlerContext {
     roomManager: RoomManager; // RoomManager type
+    snakeManager: SnakeManager; // SnakeManager type
     broadcastToRoom: (roomId: string, message: Response, excludeWs?: ExtendedWebSocket) => void;
     broadcastToAll: (message: Response, excludeWs?: ExtendedWebSocket) => void;
 }

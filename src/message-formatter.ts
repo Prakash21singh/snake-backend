@@ -8,7 +8,11 @@ export class MessageFormatter {
     static changeGameStatus(roomId: string, gameStatus: string): Response {
         return this.createResponse('GAME_STATUS_CHANGED', { roomId, gameStatus });
     }
-    
+
+    static gameAlreadyInProgress(roomId: string): Response {
+        return this.createResponse('GAME_ALREADY_IN_PROGRESS', { roomId });
+    }
+
     static gameStartCountdown(roomId: string, countdown: number): Response {
         return this.createResponse('GAME_START_COUNTDOWN', { roomId, countdown });
     }
