@@ -91,7 +91,12 @@ wss.on('connection', (ws: ExtendedWebSocket) => {
 
     ws.on('close', () => {
         console.log(`User ${ws.user.name} disconnected`);
-        roomManager.removeFromAllRooms(ws);
+        const roomId = roomManager.removeFromAllRooms(ws);
+        if(!roomId) return;
+        const room = roomManager.getRoom(roomId);
+        if(!!room){
+            WebSocketUtils.broadcastToRoom(room.participants, MessageFormatter.participantLeft(roomId, ws.user.id), ws)
+        }
     });
 });
 
@@ -104,3 +109,7 @@ const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
+
+
+// todos
+// 1. on game play start moving them up on their frontend.

@@ -18,7 +18,7 @@ export const handleLeaveRoom: EventHandler = (data, ws, context) => {
         // Notify others in the room
         context.broadcastToRoom(
             roomId,
-            MessageFormatter.participantLeft(roomId),
+            MessageFormatter.participantLeft(roomId, ws.user.id),
             ws
         );
     } catch (error: unknown) {

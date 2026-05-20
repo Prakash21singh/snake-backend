@@ -1,6 +1,4 @@
-import { Direction, ExtendedWebSocket, SnakePosition } from "./types";
-
-
+import { Direction, ExtendedWebSocket, SnakePosition, SnakeState } from "./types";
 
 /**
  * SnakeManager handles game snake logic:
@@ -159,7 +157,7 @@ export class SnakeManager {
      * - Down: +20 (next row)
      * - Up: -20 (previous row)
      */
-    private getDirectionStep(direction: Direction): number {
+    getDirectionStep(direction: Direction): number {
         switch (direction) {
             case 'R': return 1;
             case 'L': return -1;
@@ -270,4 +268,49 @@ export class SnakeManager {
         keysToDelete.forEach(key => this.snakeStates.delete(key));
     }
 
+    getRandomFruitPosition(){
+        const randX = Math.floor(Math.random() * this.GRID_SIZE)
+        const randY = Math.floor(Math.random() * this.GRID_SIZE)
+        return {
+            randX,
+            randY
+        }
+    }
+
+    generateFruit(snakePos: SnakeState["body"]){
+        let position = this.getRandomFruitPosition()
+        let isFruitOverlappingCurrentSnake = snakePos.some((snake)=> snake.x === position.randX && snake.y == position.randY)
+
+        while(isFruitOverlappingCurrentSnake){
+            position = this.getRandomFruitPosition();
+            isFruitOverlappingCurrentSnake = snakePos.some(({x, y})=> x === position.randX && y === position.randY);
+        }
+
+        const pos = (position.randY  * this.GRID_SIZE) + position.randX;
+        return pos;
+    }
+
+
+    isCollision(coords:{x: number, y: number}){
+
+        if(
+            coords.x < 0 ||
+            coords.y < 0 ||
+            coords.x > (this.GRID_WIDTH - 1) || 
+            coords.y > (this.GRID_HEIGHT - 1)
+        ){
+            return true;
+        }
+
+        return false;
+       
+    }
+
+    
+    isSelfCollision(
+        head: { x: number, y: number},
+        body: {x: number, y: number}[]
+    ): boolean{
+        return body.some((b) => b.x === head.x && b.y === head.y)
+    }
 }

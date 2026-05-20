@@ -22,16 +22,11 @@ export interface SnakeState {
     body: { x: number; y: number }[];
 }
 
-export interface GameState {
-    score: number;
-    isAlive: boolean;
-}
 
 export interface ExtendedWebSocket extends WebSocket {
     user: User;
     snake?: SnakeState;
     color: string;
-    gameState: GameState;
     standByStatus: UserStandByStatus;
     status: ParticipantStatus;
 }
@@ -44,6 +39,7 @@ export interface Room {
     gameStatus: GameStatus;
     startTime?: number;
     countDownTimer?: ReturnType<typeof setTimeout>;
+    fruitPosition?: number;
 }
 
 // Message Types

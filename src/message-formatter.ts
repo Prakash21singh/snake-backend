@@ -1,10 +1,19 @@
-import type { Response, ErrorResponse } from './types';
+import type { Response, ErrorResponse, ParticipantStatus } from './types';
 
 /**
  * Centralized message formatting for WebSocket responses
  * Ensures consistency across all message types
  */
 export class MessageFormatter {
+    static participantDead(roomId: string, status : "dead", userId?: string){
+        let obj = {
+            roomId,
+            status,
+            userId
+        }
+
+        return this.createResponse("PARTICIPANT_DEAD", obj);
+    }
     static changeGameStatus(roomId: string, gameStatus: string): Response {
         return this.createResponse('GAME_STATUS_CHANGED', { roomId, gameStatus });
     }
@@ -66,8 +75,8 @@ export class MessageFormatter {
         return this.createResponse('LEFT_ROOM', { roomId });
     }
 
-    static participantLeft(roomId: string): Response {
-        return this.createResponse('PARTICIPANT_LEFT', { roomId });
+    static participantLeft(roomId: string, userId: string): Response {
+        return this.createResponse('PARTICIPANT_LEFT', { roomId, userId });
     }
 }
 

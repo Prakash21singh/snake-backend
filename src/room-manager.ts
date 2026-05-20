@@ -42,6 +42,11 @@ export class RoomManager {
         return this.rooms.get(roomId) ?? null;
     }
 
+    startRoomGame(roomId: string){
+        const room = this.rooms.get(roomId)
+        if(!room) return null;
+        this.rooms.set(roomId, {...room, gameStatus: "in-progress",})
+    }
     /**
      * Add a participant to a room
      * @returns participants array or error object
@@ -131,13 +136,21 @@ export class RoomManager {
      * Remove a participant from all rooms
      * Useful for cleanup on disconnect
      */
-    removeFromAllRooms(participant: ExtendedWebSocket): void {
+    removeFromAllRooms(participant: ExtendedWebSocket): string | undefined {
+        let roomId;
         for (const room of this.rooms.values()) {
-            room.participants = room.participants.filter(p => p !== participant);
+            room.participants = room.participants.filter(p => {
+                if(p !== participant){
+                    return p
+                }else {
+                    roomId = room.id;
+                }
+            });
             if (room.participants.length === 0) {
                 // this.rooms.delete(room.id);
             }
         }
+        return roomId;
     }
 
     /**
@@ -147,5 +160,6 @@ export class RoomManager {
         return this.rooms.delete(roomId);
     }
 
+    
 }
 
